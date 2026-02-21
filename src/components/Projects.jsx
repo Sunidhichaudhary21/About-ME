@@ -1,138 +1,216 @@
-import React, { useState } from 'react';
-import { FiGithub, FiExternalLink, FiStar } from 'react-icons/fi';
-import './Projects.css';
+import React, { useRef, useLayoutEffect } from 'react';
+import { FiGithub, FiExternalLink, FiArrowRight, FiArrowUpRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Projects = () => {
-  const [filter, setFilter] = useState('all');
+  const componentRef = useRef(null);
+  const sliderRef = useRef(null);
 
   const projects = [
     {
       id: 1,
-      title: 'E-Commerce Platform',
-      description: 'A full-featured e-commerce platform with payment integration',
-      image: '🛍️',
-      tags: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-      category: 'fullstack',
-      github: '#',
-      live: '#',
-      featured: true
+      title: 'Leetcode Metrics',
+      description: 'Comprehensive dashboard for Leetcode users. Tracks problem-solving stats, visualizes progress, and provides personalized insights to boost coding skills.',
+      tags: ['HTML', 'CSS', 'JavaScript'],
+      github: 'https://github.com/Sunidhichaudhary21/Leetcode_metric.git',
+      color: '#335c67'
     },
     {
       id: 2,
-      title: 'Task Management App',
-      description: 'Collaborative task management application with real-time updates',
-      image: '✓',
-      tags: ['React', 'Firebase', 'Tailwind'],
-      category: 'frontend',
-      github: '#',
-      live: '#',
-      featured: true
+      title: 'Portfolio',
+      description: 'Personal portfolio website built with React and Tailwind CSS. Showcases projects, skills, and experience with a clean, responsive design.',
+      tags: ['React', 'GSAP', 'Tailwind', 'Framer Motion','JavaScript'],
+      github: 'https://github.com/Sunidhichaudhary21',
+      color: '#e09f3e'
     },
     {
       id: 3,
-      title: 'Social Media API',
-      description: 'RESTful API for a social media platform with authentication',
-      image: '🔗',
-      tags: ['Node.js', 'Express', 'PostgreSQL', 'JWT'],
-      category: 'backend',
-      github: '#',
-      live: '#'
-    },
-    {
-      id: 4,
-      title: 'Weather App',
-      description: 'Real-time weather app with location-based forecasting',
-      image: '⛅',
-      tags: ['React', 'API', 'Chart.js'],
-      category: 'frontend',
-      github: '#',
-      live: '#'
-    },
-    {
-      id: 5,
-      title: 'Blog Platform',
-      description: 'Full-stack blogging platform with comments and categories',
-      image: '📝',
-      tags: ['Next.js', 'Prisma', 'PostgreSQL'],
-      category: 'fullstack',
-      github: '#',
-      live: '#',
-      featured: true
-    },
-    {
-      id: 6,
-      title: 'Leetcode Metric',
-      description: 'Real-time web to give summary of the user',
-      image: '💬',
-      tags: ['React', 'Socket.io', 'Node.js'],
-      category: 'fullstack',
-      github: '#',
-      live: '#'
+      title: 'Bworth',
+      description: 'A Sustainable Clothing Marketplace built with React and Node.js. Connects eco-conscious buyers and sellers, offering a platform for sustainable fashion with secure transactions and user-friendly design.',
+      tags: ['Node.js', 'React.js', 'TypeScript', 'Api'],
+      github: 'https://github.com/Sunidhichaudhary21',
+      color: '#9e2a2b'
     }
   ];
 
-  const categories = ['all', 'frontend', 'backend', 'fullstack'];
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      // Responsive Animations using matchMedia
+      let mm = gsap.matchMedia();
 
-  const filtered = filter === 'all' 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+      mm.add("(min-width: 768px)", () => {
+        // Desktop: Horizontal Scroll
+        let sections = gsap.utils.toArray(".project-card-desktop");
+        // We have strict number of cards + intro section.
+        // Total slides = 1 (Intro) + 3 (Projects) + 1 (View All CTA)
+
+        gsap.to(sections, {
+          xPercent: -100 * (sections.length - 1),
+          ease: "none",
+          scrollTrigger: {
+            trigger: sliderRef.current,
+            pin: true,
+            scrub: 1,
+            snap: 1 / (sections.length - 1),
+            // Adjust duration based on contents
+            end: () => "+=" + sliderRef.current.offsetWidth * sections.length
+          }
+        });
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        // Mobile: Simple Fade Up
+        gsap.utils.toArray(".project-card-mobile").forEach((card) => {
+          gsap.fromTo(card,
+            { opacity: 0, y: 50 },
+            {
+              opacity: 1, y: 0,
+              duration: 0.8,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+              }
+            }
+          );
+        });
+      });
+
+    }, componentRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="projects" id="projects">
-      <div className="container">
-        <h2 className="section-title" data-aos="fade-up">Projects</h2>
+    <section ref={componentRef} className="bg-[#fffcf5] overflow-hidden relative" id="projects">
+      {/* Desktop View - Horizontal Scroll */}
+      <div className="hidden md:block">
+        <div ref={sliderRef} className="h-screen w-full flex flex-nowrap items-center bg-[#fffcf5]">
+          {/* Intro Card */}
+          <div className="project-card-desktop min-w-[500px] h-full flex flex-col justify-center px-20 relative z-10 bg-[#fffcf5] border-r border-[#335c67]/10">
+            <div className="space-y-4">
+              <div className="inline-block px-3 py-1 bg-[#e09f3e]/20 text-[#e09f3e] rounded-full text-xs font-bold tracking-widest uppercase mb-2">
+                Featured Works
+              </div>
+              <h2 className="text-6xl font-black text-[#335c67] leading-tight">
+                My <br /> Projects
+              </h2>
+              <p className="text-[#335c67]/70 text-lg max-w-xs leading-relaxed">
+                A selection of detailed case studies highlighting my development process.
+              </p>
+              <div className="pt-8 flex items-center gap-2 text-[#335c67] font-semibold animate-pulse">
+                Scroll to explore <FiArrowRight />
+              </div>
+            </div>
+          </div>
 
-        <div className="filter-buttons" data-aos="fade-up">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              className={`filter-btn ${filter === cat ? 'active' : ''}`}
-              onClick={() => setFilter(cat)}
-            >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        <div className="projects-grid">
-          {filtered.map((project, index) => (
-            <div
-              key={project.id}
-              className={`project-card ${project.featured ? 'featured' : ''}`}
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              {project.featured && (
-                <div className="featured-badge">
-                  <FiStar /> Featured
-                </div>
-              )}
-
-              <div className="project-image">
-                <span className="image-emoji">{project.image}</span>
+          {/* Project Cards */}
+          {projects.map((project, index) => (
+            <div key={project.id} className="project-card-desktop min-w-[80vw] lg:min-w-[60vw] h-screen flex items-center justify-center p-12 lg:p-24 relative box-border bg-[#fffcf5]">
+              {/* Background Number */}
+              <div className="absolute top-10 right-10 text-[12rem] font-bold text-[#335c67]/5 leading-none select-none z-0">
+                0{index + 1}
               </div>
 
-              <div className="project-content">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
+              <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 group">
+                {/* Left: Content */}
+                <div className="space-y-8 order-2 lg:order-1">
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag, i) => (
+                      <span key={i} className="px-3 py-1 border border-[#335c67]/20 rounded-full text-xs font-medium text-[#335c67]/70 font-mono">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
 
-                <div className="project-tags">
-                  {project.tags.map((tag, i) => (
-                    <span key={i} className="tag">{tag}</span>
-                  ))}
+                  <h3 className="text-5xl font-bold text-[#335c67] group-hover:text-[#e09f3e] transition-colors duration-300">
+                    {project.title}
+                  </h3>
+
+                  <p className="text-xl text-[#335c67]/70 leading-relaxed font-light border-l-4 border-[#e09f3e] pl-6">
+                    {project.description}
+                  </p>
+
+                  <div className="flex gap-6 pt-4">
+                    <a href={project.github} className="flex items-center gap-2 px-6 py-3 bg-[#335c67] text-white rounded-full font-medium hover:bg-[#e09f3e] transition-colors duration-300 shadow-lg shadow-[#335c67]/20">
+                      <FiGithub size={20} /> Code
+                    </a>
+                    
+                  </div>
                 </div>
 
-                <div className="project-links">
-                  <a href={project.github} className="project-link">
-                    <FiGithub /> Code
-                  </a>
-                  <a href={project.live} className="project-link">
-                    <FiExternalLink /> Live
-                  </a>
+                {/* Right: Abstract Card - using color prop */}
+                <div className="order-1 lg:order-2 relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-[#335c67]/20 group-hover:-translate-y-2 transition-transform duration-500 ease-out bg-white p-2 border-2 border-[#fff3b0]">
+                  <div className={`w-full h-full rounded-2xl flex items-center justify-center relative overflow-hidden`} style={{ background: `linear-gradient(135deg, ${project.color}15, ${project.color}05)` }}>
+                    {/* Decorative Circles */}
+                    <div className="absolute top-[-20%] right-[-20%] w-[80%] h-[80%] rounded-full opacity-10" style={{ backgroundColor: project.color }}></div>
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-10" style={{ backgroundColor: project.color }}></div>
+
+                    <div className="text-center z-10 transform group-hover:scale-110 transition-transform duration-700">
+                      <h4 className="text-3xl font-bold text-[#335c67]/80 mb-2">{project.title}</h4>
+                      <span className="text-sm font-mono text-[#e09f3e]">Preview</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Desktop View All Button (Below Scroll) */}
+        <div className="w-full py-20 bg-[#fffcf5] flex justify-center">
+          <Link to="/all-projects" className="group relative inline-flex items-center justify-center gap-4 px-12 py-6 bg-[#335c67] text-white rounded-full font-bold text-xl overflow-hidden shadow-2xl hover:bg-[#e09f3e] transition-all duration-300">
+            <span className="relative z-10 flex items-center gap-3">
+              View All Projects <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-[#e09f3e] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile View - Vertical Stack */}
+      <div className="md:hidden py-20 px-6">
+        <div className="mb-16 text-center">
+          <span className="text-[#e09f3e] text-sm font-bold tracking-widest uppercase mb-2 block">Featured Works</span>
+          <h2 className="text-4xl font-bold text-[#335c67]">My Projects</h2>
+        </div>
+
+        <div className="space-y-16 mb-16">
+          {projects.map((project, index) => (
+            <div key={project.id} className="project-card-mobile group">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-xl shadow-[#335c67]/5 border border-[#335c67]/5 mb-6 relative">
+                <div className="h-48 flex items-center justify-center" style={{ backgroundColor: `${project.color}10` }}>
+                  <h4 className="text-xl font-bold text-[#335c67]/60">{project.title}</h4>
+                </div>
+                <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-sm">
+                  <FiExternalLink className="text-[#335c67]" />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag, i) => (
+                    <span key={i} className="text-xs font-bold text-[#e09f3e] uppercase tracking-wide">#{tag}</span>
+                  ))}
+                </div>
+                <h3 className="text-3xl font-bold text-[#335c67]">{project.title}</h3>
+                <p className="text-[#335c67]/70 leading-relaxed">{project.description}</p>
+                <div className="flex gap-4 pt-2">
+                  <a href={project.github} className="text-[#335c67] font-bold border-b-2 border-[#335c67]/20 hover:border-[#e09f3e] transition-colors pb-1">View Code</a>
+                  <a href={project.live} className="text-[#335c67] font-bold border-b-2 border-[#335c67]/20 hover:border-[#e09f3e] transition-colors pb-1">Live Demo</a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center" data-aos="fade-up">
+          <Link to="/all-projects" className="inline-flex items-center gap-2 px-8 py-4 bg-[#335c67] text-white font-bold rounded-full shadow-lg shadow-[#335c67]/30 hover:bg-[#e09f3e] transition-all duration-300">
+            View All Projects <FiArrowRight />
+          </Link>
         </div>
       </div>
     </section>

@@ -1,58 +1,52 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #f1f5f9;
-  background-color: #0f172a;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  color: #6366f1;
-  text-decoration: none;
-}
+@import "tailwindcss";
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: #0f172a;
+  cursor: none;
 }
 
-#root {
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-}
 
-@media (max-width: 1200px) {
-  :root {
-    font-size: 15px;
-  }
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+@layer utilities {
+  @keyframes blob {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+      transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
   }
-  a:hover {
-    color: #747bff;
+
+  .animate-blob {
+    animation: blob 7s infinite;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
   }
 }
